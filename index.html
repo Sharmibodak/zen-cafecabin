@@ -3,60 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Interactive Room</title>
+    <title>3D Model Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/loaders/GLTFLoader.js"></script>
     <style>
         body { margin: 0; }
         canvas { display: block; }
     </style>
 </head>
 <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
-        let scene, camera, renderer, room, character;
+        // Set up scene, camera, and renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
 
-        function init() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ antialias: true });
+        // Load the GLB file
+        const loader = new THREE.GLTFLoader();
+        loader.load('https://github.com/Sharmibodak/zen-cafecabin/raw/main/character.glb', function (gltf) {
+            scene.add(gltf.scene);
+            gltf.scene.position.set(0, 0, 0); // Adjust position if needed
+        }, undefined, function (error) {
+            console.error('An error occurred loading the GLB model:', error);
+        });
+
+        // Set up camera position
+        camera.position.z = 5;
+
+        // Handle window resizing
+        window.addEventListener('resize', () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
 
-            const light = new THREE.DirectionalLight(0xffffff, 1);
-            light.position.set(2, 2, 5).normalize();
-            scene.add(light);
-
-            const loader = new THREE.GLTFLoader();
-            
-            // Load the room model
-            loader.load('Room #1.glb', function (gltf) {
-                room = gltf.scene;
-                scene.add(room);
-                room.position.set(0, 0, 0);
-                renderer.render(scene, camera);
-            }, undefined, function (error) {
-                console.error(error);
-            });
-
-            // Load the character model
-            loader.load('path/to/your/character.glb', function (gltf) {
-                character = gltf.scene;
-                scene.add(character);
-                character.position.set(0, 0, 0); // Set initial position
-                renderer.render(scene, camera);
-            }, undefined, function (error) {
-                console.error(error);
-            });
-
-            camera.position.z = 5;
-        }
-
+        // Animation loop
         function animate() {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
         }
-
-        init();
         animate();
     </script>
 </body>
