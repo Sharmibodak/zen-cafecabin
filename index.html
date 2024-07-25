@@ -3,64 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zen Cafe Cabin</title>
+    <title>3D Interactive Room</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-            margin: 0;
-        }
-        #3d-container {
-            width: 100%;
-            height: 100vh;
-        }
+        body { margin: 0; }
+        canvas { display: block; }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/examples/js/loader/GLTFLoader.js"></script>
 </head>
 <body>
-    <div id="3d-container"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
-        // Setup scene
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('3d-container').appendChild(renderer.domElement);
+        let scene, camera, renderer, room, character;
 
-        // Add lights
-        const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
-        scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(1, 1, 1).normalize();
-        scene.add(directionalLight);
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
 
-        // Load 3D model
-        const loader = new THREE.GLTFLoader();
-        loader.load('path-to-your-model.glb', function (gltf) {
-            scene.add(gltf.scene);
-            gltf.scene.position.set(0, 0, 0);
-        }, undefined, function (error) {
-            console.error(error);
-        });
+            const light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(2, 2, 5).normalize();
+            scene.add(light);
 
-        // Animation loop
+            const loader = new THREE.GLTFLoader();
+            
+            // Load the room model
+            loader.load('Room #1.glb', function (gltf) {
+                room = gltf.scene;
+                scene.add(room);
+                room.position.set(0, 0, 0);
+                renderer.render(scene, camera);
+            }, undefined, function (error) {
+                console.error(error);
+            });
+
+            // Load the character model
+            loader.load('path/to/your/character.glb', function (gltf) {
+                character = gltf.scene;
+                scene.add(character);
+                character.position.set(0, 0, 0); // Set initial position
+                renderer.render(scene, camera);
+            }, undefined, function (error) {
+                console.error(error);
+            });
+
+            camera.position.z = 5;
+        }
+
         function animate() {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
         }
-        animate();
 
-        // Resize listener
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        init();
+        animate();
     </script>
 </body>
 </html>
+
