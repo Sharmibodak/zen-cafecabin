@@ -12,35 +12,56 @@
             align-items: center;
             height: 100vh;
             background-color: #f0f0f0;
+            margin: 0;
         }
-        .container {
-            text-align: center;
-        }
-        .character {
-            width: 200px;
-            height: 200px;
-            background-image: url('image-removebg-preview (8).png');
-            background-size: cover;
-            margin: 20px auto;
+        #3d-container {
+            width: 800px;
+            height: 600px;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/examples/js/loader/GLTFLoader.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Productivity Buddy</h1>
-        <div class="character"></div>
-        <input type="text" id="task" placeholder="Enter task">
-        <input type="number" id="time" placeholder="Time in minutes">
-        <button onclick="startTimer()">Start</button>
-        <div id="message"></div>
-    </div>
+    <h1>Productivity Buddy</h1>
+    <div id="3d-container"></div>
     <script>
-        function startTimer() {
-            const task = document.getElementById('task').value;
-            const time = document.getElementById('time').value;
-            document.getElementById('message').innerText = `Task: ${task} for ${time} minutes`;
-            // Add code to start timer and animate character
+        // Setup scene
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('3d-container').appendChild(renderer.domElement);
+
+        // Add lights
+        const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(1, 1, 1).normalize();
+        scene.add(directionalLight);
+
+        // Load 3D model
+        const loader = new THREE.GLTFLoader();
+        loader.load('your-model.glb', function (gltf) {
+            scene.add(gltf.scene);
+            gltf.scene.position.set(0, 0, 0);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
         }
+        animate();
+
+        // Resize listener
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
 </html>
