@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity Buddy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+        }
+        .character {
+            width: 200px;
+            height: 200px;
+            background-image: url('character.png'); /* Replace with your character image */
+            background-size: cover;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Productivity Buddy</h1>
+        <div class="character"></div>
+        <input type="text" id="task" placeholder="Enter task">
+        <input type="number" id="time" placeholder="Time in minutes">
+        <button onclick="startTimer()">Start</button>
+        <div id="message"></div>
+    </div>
+    <script>
+        function startTimer() {
+            const task = document.getElementById('task').value;
+            const time = document.getElementById('time').value;
+            document.getElementById('message').innerText = `Task: ${task} for ${time} minutes`;
+            // Add code to start timer and animate character
+        }
+    </script>
+</body>
+</html>
